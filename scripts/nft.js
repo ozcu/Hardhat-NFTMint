@@ -1,5 +1,8 @@
 const { task } = require( "hardhat/config");
 
+
+//contract : 0xF1084814c9A7e75eFb58e114C51b9300dF173F74
+
 task("DeployNFT", "")
     .addParam("name", "Name of the Nft")
 	.addParam("symbol", "Symbol of the Nft")
@@ -13,3 +16,55 @@ task("DeployNFT", "")
         console.log(`Deployed to: ${deployed.address}`);
     });
 
+
+    task("GetBaseUri", "")
+    .addParam("contract", "Contract Hash")
+    .setAction(async (taskArgs, hre) => {
+        const contractFactory = await hre.ethers.getContractFactory("MintNFT");
+        const contractAttached = contractFactory.attach(taskArgs.contract);
+    
+        const baseUri = await contractAttached.getBaseURI();
+    
+        console.log(`Base uri: ${baseUri}`);
+    });
+
+    task("SetBaseUri", "")
+    .addParam("contract", "Contract Hash")
+    .addParam("baseurl", "Base Url")
+    .setAction(async (taskArgs, hre) => {
+        const contractFactory = await hre.ethers.getContractFactory("MintNFT");
+        const contractAttached = contractFactory.attach(taskArgs.contract);
+
+        const tx = await contractAttached.setBaseURI(taskArgs.baseurl);
+        await tx.wait();
+    
+        const baseUri = await contractAttached.getBaseURI();
+        console.log(`New base uri: ${baseUri}`);
+    });
+    
+    task("MintNft", "")
+    .addParam("contract", "Hash of the Nft")
+    .addParam("tokenid", "Token ID")
+    .addParam("tokenuri", "Token uri")
+    .setAction(async (taskArgs, hre) => {
+        const contractFactory = await hre.ethers.getContractFactory("MintNFT");
+        const contractAttached = contractFactory.attach(taskArgs.contract);
+
+        const [owner] = await hre.ethers.getSigners();
+
+        const mintTx = await contractAttached.safeMintWithUri(owner.address, taskArgs.tokenid, taskArgs.tokenuri);
+        await mintTx.wait();
+        
+        console.log(`Minted token ${taskArgs.tokenid} with uri ${taskArgs.tokenuri}`);
+      });
+
+    task("GetTokenUri", "")
+    .addParam("contract", "Hash of the Nft")
+    .addParam("tokenid", "Token ID")
+    .setAction(async (taskArgs, hre) => {
+        const contractFactory = await hre.ethers.getContractFactory("MintNFT");
+        const contractAttached = contractFactory.attach(taskArgs.contract);
+
+        const tokenUri = await contractAttached.tokenURI(taskArgs.tokenid);
+        console.log(`Uri for token ${0}: ${tokenUri}`);
+    });
