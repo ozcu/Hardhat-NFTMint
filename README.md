@@ -3,5 +3,5 @@ Uploaded a sample image via Infura to IFPS and deployed it to Avalanche and Rops
 Samples
 
 ![Imgur Image](https://imgur.com/UAJLPdOl.jpg)
-![Imgur Image](https://imgur.com/NzvnmUpl.jpg)
+![Imgur Image](https://imgur.com/NzvnmUp.jpg)
 
